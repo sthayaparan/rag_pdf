@@ -84,6 +84,8 @@ frontend/
 scripts/
   start-backend.ps1  start-frontend.ps1  stop-backend.ps1  stop-frontend.ps1   # Windows
   start-backend.sh   start-frontend.sh   stop-backend.sh   stop-frontend.sh    # Linux
+.github/
+  workflows/ci.yml   # GitHub Actions: backend tests, frontend lint, tests and build
 docs/
   PLAN.md
   Workflow.md        # architecture and request workflow diagrams (Mermaid)
@@ -103,7 +105,7 @@ README.md
 
 Success criteria:
 - [x] `.gitignore` present
-- [ ] `.env` is not tracked after the first commit (`.env` is ignored by `.gitignore` and untracked; no commit has been made yet)
+- [x] `.env` is not tracked after the first commit
 - [x] `uv sync` succeeds in `backend/`
 - [x] `npm install` and `npm run build` succeed in `frontend/`
 - [x] `uv run pytest` and `npm test` run (empty suites pass)
@@ -193,7 +195,19 @@ Success criteria:
 - [x] All defects found are fixed and the full test suites pass: pytest 17, Vitest 13, Playwright 6 (desktop and mobile)
   - Fixed: the agent looped on repeated searches until the proxy timed out (search limit added to the system prompt)
 
-## Phase 7: Finish
+## Phase 7: Continuous Integration
+
+- GitHub Actions workflow `.github/workflows/ci.yml`, on pushes to `main` and on pull requests, with two parallel jobs:
+  - `backend`: `uv sync --locked`, `uv run pytest` (dummy API keys; the tests use fake models and embeddings)
+  - `frontend`: `npm ci`, `npm run lint`, `npm test`, `npm run build`
+- Playwright is not run in CI: it needs real API keys, embedding the PDF and running servers
+
+Success criteria:
+- [x] Workflow parses, uses current action versions (`checkout@v7`, `setup-uv@v10`, `setup-node@v7`) with valid inputs
+- [x] Locally under CI conditions: backend tests pass with dummy keys, `uv.lock` and `package-lock.json` are in sync
+- [ ] Workflow passes on GitHub after it is pushed
+
+## Phase 8: Finish
 
 Success criteria:
 - [x] Minimal `README.md`: what it is, prerequisites (uv, Node.js, `.env` keys), start/stop commands (noting the slow first start while the PDFs are embedded), how to run tests and re-ingest

@@ -51,3 +51,5 @@ cd backend && uv run pytest
 cd frontend && npm test
 cd frontend && npm run test:e2e   # needs the servers running
 ```
+
+GitHub Actions (`.github/workflows/ci.yml`) runs the backend tests and the frontend lint, tests and build on every push to `main` and every pull request. The Playwright tests are not run in CI because they need the API keys and real servers.
