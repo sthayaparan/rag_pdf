@@ -203,7 +203,7 @@ Success criteria:
 - Playwright is not run in CI: it needs real API keys, embedding the PDF and running servers
 
 Success criteria:
-- [x] Workflow parses, uses current action versions (`checkout@v7`, `setup-uv@v10`, `setup-node@v7`) with valid inputs
+- [x] Workflow parses, uses current action versions (`checkout@v7`, `setup-uv@v10.4.0`, `setup-node@v7`; all three tags confirmed to exist) with valid inputs
 - [x] Locally under CI conditions: backend tests pass with dummy keys, `uv.lock` and `package-lock.json` are in sync
 - [ ] Workflow passes on GitHub after it is pushed
 
