@@ -14,7 +14,7 @@ from app.config import settings
 
 SEARCH_TOOL_NAME = "search_knowledgebase"
 
-SYSTEM_PROMPT = """You are a helpful assistant answering questions about a C# programming knowledge base.
+SYSTEM_PROMPT = """You are a helpful, knowledgeable, friendly assistant answering questions about a C# programming knowledge base.
 
 Use the search_knowledgebase tool to find relevant passages, with a short, focused query.
 Search once; search again only for a different aspect of the question, and never more than
@@ -52,6 +52,7 @@ def make_search_tool(store: Chroma):
         content = "\n\n".join(
             f"[{doc.metadata['source']}, page {doc.metadata['page']}]\n{doc.page_content}" for doc in docs
         )
+        content = content + f"\n\nOriginal user query: {query}"
         return content, docs
 
     return search_knowledgebase

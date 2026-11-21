@@ -148,7 +148,7 @@ Success criteria:
 
 Design: a clean, centered single-column chat in the style of modern AI assistants.
 - Header with the app name and a "New chat" button
-- Empty state: title, short subtitle and 3-4 clickable example questions about C#
+- Empty state: centered title and short subtitle (no example questions, to keep it simple)
 - Messages: user messages right-aligned in a subtle bubble; assistant answers rendered as Markdown with syntax-highlighted code blocks, and source chips (file, page) underneath
 - Animated typing indicator while waiting; auto-scroll to the latest message
 - Input: auto-growing textarea pinned to the bottom; Enter sends, Shift+Enter adds a new line; disabled while a request is in flight
@@ -158,7 +158,7 @@ Design: a clean, centered single-column chat in the style of modern AI assistant
 
 Success criteria:
 - [x] Vitest + React Testing Library unit tests:
-  - [x] Empty state shows example questions; clicking one sends it
+  - [x] Empty state shows the title and the input, with no messages
   - [x] Sending a message shows the user message, then the typing indicator, then the answer and sources (fetch mocked)
   - [x] Enter sends, Shift+Enter does not; empty input cannot be sent
   - [x] Error response shows an error message
@@ -169,12 +169,13 @@ Success criteria:
 
 ## Phase 5: Start and Stop Scripts
 
-- `start-backend` / `start-frontend` (`.ps1` and `.sh`): `start-backend` runs `uv sync` and starts `uvicorn`; `start-frontend` runs `npm install`, builds and runs `next start`. Each runs in the background, writes its PID to `scripts/*.pid`, logs to `*.log`, and waits until its server responds (first-start ingestion can take minutes)
+- `start-backend` / `start-frontend` (`.ps1` and `.sh`): `start-backend` runs `uv sync` and starts `uvicorn`; `start-frontend` runs `npm install`, builds and runs `next start`. Each exits early if its server is already running; otherwise it starts the server in the background, logs to `*.log`, waits until the server responds (first-start ingestion can take minutes), and only then writes its PID to `scripts/*.pid`, so a failed start never replaces a good PID file
 - `stop-backend` / `stop-frontend`: stop that server's process tree using its PID file and remove the file
 
 Success criteria:
 - [x] On Windows, `start-backend.ps1` then `start-frontend.ps1` bring up both servers; `http://localhost:3000` loads and `/api/health` is ok through the proxy
 - [x] `stop-frontend.ps1` and `stop-backend.ps1` each stop only their own server
+- [x] Running a start script while its server is already running reports it and leaves the running server and PID file untouched
 - [ ] The `.sh` scripts are written to the same behaviour (syntax-checked only: `setsid` is not available in Git Bash)
 
 ## Phase 6: Integration Testing (Playwright)
@@ -182,14 +183,14 @@ Success criteria:
 Tests in `frontend/e2e/chat.spec.ts`, run with `npm run test:e2e` against the real servers started by the scripts, with real OpenRouter and embedding calls. Use generous test timeouts for LLM responses.
 
 Success criteria:
-- [x] Page loads with the empty state and example questions
+- [x] Page loads with the empty state and the input
 - [x] Asking a C# question returns a relevant answer with at least one source chip
 - [x] A follow-up question uses the previous context
 - [x] "New chat" resets the conversation
 - [x] A question outside the knowledge base gets a "not in the knowledge base" style answer
 - [x] Layout is usable at a mobile viewport
 - [x] Screenshots reviewed for visual quality in light and dark mode
-- [x] All defects found are fixed and the full test suites pass: pytest 17, Vitest 14, Playwright 7 (desktop and mobile)
+- [x] All defects found are fixed and the full test suites pass: pytest 17, Vitest 13, Playwright 6 (desktop and mobile)
   - Fixed: the agent looped on repeated searches until the proxy timed out (search limit added to the system prompt)
 
 ## Phase 7: Finish

@@ -6,13 +6,6 @@ import { ChatInput } from "@/components/ChatInput";
 import { Message, type ChatMessage } from "@/components/Message";
 import { sendMessage } from "@/lib/api";
 
-export const EXAMPLE_QUESTIONS = [
-  "What is the difference between a record and a class?",
-  "How does pattern matching work with switch expressions?",
-  "When should I use async and await?",
-  "How do nullable reference types prevent errors?",
-];
-
 export function Chat() {
   const [sessionId, setSessionId] = useState(() => crypto.randomUUID());
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -69,36 +62,13 @@ export function Chat() {
 
       <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-5">
         {empty ? (
-          <section className="flex flex-1 flex-col justify-center gap-8 py-12">
-            <div className="flex flex-col gap-3">
-              <h1 className="text-4xl font-semibold tracking-tight text-balance text-ink sm:text-5xl">
-                Ask the C# book anything.
-              </h1>
-              <p className="max-w-xl text-lg text-pretty text-muted">
-                Answers are drawn from the C# documentation in your knowledge base, with the pages they came from.
-              </p>
-            </div>
-            <ul className="flex flex-col border-t border-line" aria-label="Example questions">
-              {EXAMPLE_QUESTIONS.map((question) => (
-                <li key={question} className="border-b border-line">
-                  <button
-                    type="button"
-                    onClick={() => send(question)}
-                    className="group flex w-full items-center justify-between gap-4 py-3.5 text-left text-ink transition-colors hover:text-accent focus-visible:text-accent focus-visible:underline focus-visible:outline-none"
-                  >
-                    {question}
-                    <svg
-                      viewBox="0 0 20 20"
-                      fill="none"
-                      className="size-4 shrink-0 text-muted transition-all group-hover:translate-x-0.5 group-hover:text-accent"
-                      aria-hidden="true"
-                    >
-                      <path d="M4 10h12m0 0-5-5m5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </button>
-                </li>
-              ))}
-            </ul>
+          <section className="flex flex-1 flex-col items-center justify-center gap-3 py-12 text-center">
+            <h1 className="text-4xl font-semibold tracking-tight text-balance text-ink sm:text-5xl">
+              Ask the C# book anything.
+            </h1>
+            <p className="max-w-xl text-lg text-pretty text-muted">
+              Answers are drawn from the C# documentation in your knowledge base, with the pages they came from.
+            </p>
           </section>
         ) : (
           <div className="flex flex-col gap-8 py-8" aria-live="polite">

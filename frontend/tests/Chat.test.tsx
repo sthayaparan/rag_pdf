@@ -2,7 +2,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
-import { Chat, EXAMPLE_QUESTIONS } from "@/components/Chat";
+import { Chat } from "@/components/Chat";
 
 function mockFetch(...responses: Array<{ status?: number; body?: unknown }>) {
   const fetchMock = vi.fn();
@@ -26,23 +26,13 @@ function requestBody(fetchMock: ReturnType<typeof vi.fn>, call = 0) {
 }
 
 describe("Chat", () => {
-  it("shows example questions in the empty state", () => {
+  it("shows the empty state with the input and no messages", () => {
     render(<Chat />);
 
     expect(screen.getByRole("heading", { name: "Ask the C# book anything." })).toBeInTheDocument();
-    for (const question of EXAMPLE_QUESTIONS) {
-      expect(screen.getByRole("button", { name: question })).toBeInTheDocument();
-    }
-  });
-
-  it("sends an example question when clicked", async () => {
-    const fetchMock = mockFetch({ body: answer });
-    render(<Chat />);
-
-    await userEvent.click(screen.getByRole("button", { name: EXAMPLE_QUESTIONS[0] }));
-
-    expect(requestBody(fetchMock).message).toBe(EXAMPLE_QUESTIONS[0]);
-    expect(await screen.findByText(/reference type with value equality/)).toBeInTheDocument();
+    expect(screen.getByLabelText("Your question")).toBeInTheDocument();
+    expect(screen.queryByRole("article")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "New chat" })).toBeDisabled();
   });
 
   it("shows the question, a typing indicator, then the answer and sources", async () => {
